@@ -8,7 +8,19 @@
 const CONFIG = {
   // Data e hora do casamento (ano, mês-1, dia, hora, minuto).
   // Atenção: o mês começa em 0 — 10 = novembro.
-  dataCasamento: new Date(2026, 10, 21, 16, 0, 0),
+  dataCasamento: new Date(2026, 10, 21, 19, 30, 0),
+
+  // >>> ONDE VAI SER A FESTA <<<
+  // Cerimônia e recepção acontecem no mesmo lugar.
+  local: {
+    nome: 'Espaço Lu Festas',
+    linha1: 'Estrada da Tapera, km 8, nº 10',
+    linha2: 'Cohab São Francisco · Petrolina · PE',
+    horario: '19h30',
+    // Coordenadas usadas no mapa e nos links de navegação.
+    lat: -9.41969,
+    lng: -40.5437354
+  },
 
   // >>> LINK DO FORMULÁRIO DE CONFIRMAÇÃO DE PRESENÇA <<<
   // Troque pelo endereço real (Google Forms, Typeform, o que vocês usarem).
@@ -30,8 +42,8 @@ const CONFIG = {
   // Dados usados no arquivo de calendário (.ics)
   evento: {
     titulo: 'Casamento de Alan e Bia',
-    local: 'Petrolina, Pernambuco, Brasil',
-    descricao: 'A festa de casamento de Alan e Bia, em Petrolina — onde tudo começou.',
+    local: 'Espaço Lu Festas — Estrada da Tapera, km 8, nº 10, Cohab São Francisco, Petrolina - PE',
+    descricao: 'A festa de casamento de Alan e Bia, em Petrolina — onde tudo começou. Cerimônia e recepção no mesmo lugar, a partir das 19h30.',
     duracaoHoras: 6
   }
 };
@@ -325,8 +337,6 @@ const CONFIG = {
      Galeria: monta o mosaico a partir de assets/data/galeria.json
      ------------------------------------------------------------------ */
   const mosaico = $('#mosaico');
-  const filtros = $('#filtros');
-  const vazio = $('#galeria-vazio');
   let fotos = [];
 
   async function montaGaleria() {
@@ -352,42 +362,6 @@ const CONFIG = {
     if (!fotos.length) {
       mosaico.innerHTML = '<p class="galeria__vazio">Nenhuma foto ainda.</p>';
       return;
-    }
-
-    // botões de filtro, na ordem da história
-    const capitulos = [];
-    fotos.forEach((f) => {
-      if (!capitulos.some((c) => c.id === f.capitulo)) {
-        capitulos.push({ id: f.capitulo, rotulo: f.rotulo, ordem: f.ordem });
-      }
-    });
-    capitulos.sort((a, b) => a.ordem - b.ordem);
-
-    if (filtros) {
-      filtros.innerHTML = '';
-      const todos = document.createElement('button');
-      todos.type = 'button';
-      todos.textContent = `Tudo (${fotos.length})`;
-      todos.dataset.filtro = 'tudo';
-      todos.setAttribute('aria-pressed', 'true');
-      filtros.appendChild(todos);
-
-      capitulos.forEach((c) => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = c.rotulo;
-        b.dataset.filtro = c.id;
-        b.setAttribute('aria-pressed', 'false');
-        filtros.appendChild(b);
-      });
-
-      filtros.addEventListener('click', (e) => {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        $$('button', filtros).forEach((b) =>
-          b.setAttribute('aria-pressed', String(b === btn)));
-        aplicaFiltro(btn.dataset.filtro);
-      });
     }
 
     mosaico.innerHTML = '';
@@ -429,16 +403,6 @@ const CONFIG = {
       const btn = e.target.closest('[data-abre]');
       if (btn) abreLightbox(Number(btn.dataset.abre));
     });
-  }
-
-  function aplicaFiltro(filtro) {
-    let visiveis = 0;
-    $$('.mosaico__item').forEach((el) => {
-      const mostra = filtro === 'tudo' || el.dataset.capitulo === filtro;
-      el.hidden = !mostra;
-      if (mostra) visiveis++;
-    });
-    if (vazio) vazio.hidden = visiveis > 0;
   }
 
   function escapa(txt) {
@@ -604,6 +568,31 @@ const CONFIG = {
       $('#btn-copiar-endereco')?.setAttribute(
         'data-copiar', `${CONFIG.endereco.linha1} - ${CONFIG.endereco.linha2}`
           .replace(/ /g, ' '));
+    }
+
+    // Local da festa: nome, endereço, horário, mapa e links de navegação
+    // saem todos de CONFIG.local, para haver um lugar só a corrigir.
+    const L = CONFIG.local;
+    if (L) {
+      const coord = `${L.lat},${L.lng}`;
+      const põe = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
+
+      põe('#local-nome', L.nome);
+      põe('#local-horario', `A partir das ${L.horario}`);
+
+      const end = $('#local-endereco');
+      if (end) end.innerHTML = `${escapa(L.linha1)}<br />${escapa(L.linha2)}`;
+
+      $('#local-rota')?.setAttribute(
+        'href', `https://www.google.com/maps/dir/?api=1&destination=${coord}`);
+      $('#local-waze')?.setAttribute(
+        'href', `https://waze.com/ul?ll=${coord}&navigate=yes`);
+
+      const mapa = $('#local-mapa');
+      if (mapa) {
+        mapa.src = `https://www.google.com/maps?q=${coord}&z=14&output=embed`;
+        mapa.title = `Mapa mostrando a localização do ${L.nome}, em Petrolina`;
+      }
     }
 
     const irFormulario = $('#btn-ir-formulario');

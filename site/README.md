@@ -16,9 +16,19 @@ bloco chamado `CONFIG`:
 |---|---|
 | **Link do formulário de confirmação** | `CONFIG.linkConfirmacao` |
 | Data e hora do casamento | `CONFIG.dataCasamento` (o mês começa em 0, então `10` = novembro) |
+| Local da festa, endereço e horário | `CONFIG.local` |
+| Posição do pino no mapa | `CONFIG.local.lat` e `CONFIG.local.lng` |
 | Chave Pix | `CONFIG.pix.chave` |
 | Endereço para presentes | `CONFIG.endereco` |
 | Texto do evento no arquivo de agenda | `CONFIG.evento` |
+
+### O pino do mapa — vale conferir
+
+O endereço do Espaço Lu Festas veio de um diretório de eventos, não da ficha do
+Google. As coordenadas em `CONFIG.local` alimentam o mapa embutido e os botões
+"Como chegar" e "Abrir no Waze" ao mesmo tempo — então, se o pino estiver fora
+do lugar, abra o local no Google Maps, copie as coordenadas certas e troque
+`lat` e `lng`. É o único ponto a corrigir.
 
 ### O link do formulário — falta preencher
 
