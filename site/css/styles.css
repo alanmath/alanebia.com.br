@@ -912,6 +912,91 @@ a { color: inherit; }
   margin-block-start: 1.4rem;
 }
 
+/* ==================== hospedagem (onde ficar) ====================
+   Vive dentro da seção escura "O grande dia", logo abaixo dos cartões. */
+
+.hospedagem {
+  margin-top: clamp(1.6rem, 3.5vw, 2.6rem);
+  padding: clamp(1.7rem, 3.4vw, 2.8rem);
+  background: rgba(246, 239, 231, .04);
+  border: 1px solid rgba(246, 239, 231, .11);
+  border-radius: 4px;
+  scroll-margin-top: 6rem;
+}
+.hospedagem__cabecalho {
+  max-width: var(--leitura);
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+.hospedagem__titulo {
+  font-size: var(--t-l); color: var(--texto-claro); margin: .55rem 0 .7rem;
+}
+.hospedagem__titulo em { font-style: italic; color: var(--ouro); }
+.hospedagem__texto { margin: 0; font-size: var(--t-s); color: var(--texto-claro-suave); }
+
+.hoteis {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+  gap: clamp(.7rem, 1.4vw, 1rem);
+}
+.hotel {
+  display: flex; flex-direction: column; gap: .8rem;
+  padding: 1.15rem 1.25rem 1.2rem;
+  background: rgba(246, 239, 231, .04);
+  border: 1px solid rgba(246, 239, 231, .1);
+  border-radius: 4px;
+  transition: background .45s var(--suave), border-color .45s var(--suave);
+}
+.hotel:hover {
+  background: rgba(246, 239, 231, .08);
+  border-color: rgba(198, 167, 94, .38);
+}
+.hotel__texto { display: grid; gap: .38rem; }
+.hotel__nome {
+  font-family: var(--display); font-size: 1.12rem; color: var(--texto-claro);
+  display: flex; align-items: center; gap: .55rem; flex-wrap: wrap;
+}
+.hotel__selo {
+  font-family: var(--rotulo); font-size: .55rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--tinta); background: var(--ouro);
+  border-radius: 999px; padding: .22rem .55rem;
+}
+.hotel__desc {
+  margin: 0; font-size: .87rem; line-height: 1.5; color: var(--texto-claro-suave);
+}
+.hotel__link {
+  /* margin-top:auto encosta o link na base, para os cartões da grade
+     terminarem todos na mesma linha mesmo com descrições de tamanhos diferentes */
+  margin-top: auto; align-self: start;
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-family: var(--rotulo); font-size: .645rem; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; text-decoration: none;
+  color: var(--ouro-claro);
+  border-bottom: 1px solid rgba(198, 167, 94, .35); padding-bottom: .28rem;
+  transition: color .35s var(--suave), border-color .35s var(--suave);
+}
+.hotel__link svg { width: 13px; height: 13px; transition: transform .35s var(--suave); }
+.hotel__link:hover { color: var(--ouro); border-color: var(--ouro); }
+.hotel__link:hover svg { transform: translate(2px, -2px); }
+
+.airbnb {
+  margin-top: clamp(1rem, 2vw, 1.4rem);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1rem 1.25rem; align-items: center;
+  padding: 1.2rem 1.35rem;
+  border: 1px dashed rgba(198, 167, 94, .38); border-radius: 4px;
+}
+.airbnb > svg { width: 26px; height: 26px; color: var(--ouro); flex: none; }
+.airbnb h4 {
+  font-family: var(--display); font-size: 1.06rem;
+  color: var(--texto-claro); margin: 0 0 .25rem;
+}
+.airbnb p { margin: 0; font-size: .87rem; line-height: 1.5; color: var(--texto-claro-suave); }
+
+@media (max-width: 700px) {
+  .airbnb { grid-template-columns: 1fr; justify-items: start; }
+}
+
+
 /* ============================ rsvp ============================ */
 
 .rsvp { padding: clamp(3rem, 6vw, 4.5rem) 0; background: var(--creme-alt); }
@@ -929,6 +1014,55 @@ a { color: inherit; }
   .rsvp__faixa { grid-template-columns: 1fr; text-align: center; }
   .rsvp__texto .rotulo { justify-content: center; }
   .rsvp__texto .texto-guia { margin-inline: auto; }
+}
+
+
+/* ============================ presentes ============================
+   Seção própria, com destaque no menu. Os mesmos dados também aparecem
+   no pop-up de confirmação — daí as classes .pix e .endereco serem
+   compartilhadas entre os dois. */
+
+.presentes {
+  position: relative; overflow: hidden;
+  padding: var(--secao) 0;
+  background: var(--papel);
+  border-block: 1px solid rgba(198, 167, 94, .25);
+}
+.presentes__ornamento {
+  position: absolute; inset-inline: 0; top: 0;
+  display: flex; justify-content: center;
+  opacity: .28; pointer-events: none;
+}
+.presentes__ornamento img { width: min(520px, 68%); height: auto; }
+.presentes > .envelope { position: relative; }
+
+.presentes__cabecalho { text-align: center; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.presentes__cabecalho .titulo { margin-bottom: 1.2rem; }
+
+.presentes__opcoes {
+  display: grid; gap: clamp(1rem, 2.2vw, 1.6rem);
+  grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+  max-width: 940px; margin-inline: auto;
+}
+.presente {
+  display: flex; flex-direction: column; gap: .55rem;
+  padding: clamp(1.5rem, 2.6vw, 2rem);
+  background: var(--creme); border: 1px solid rgba(31, 58, 68, .09);
+  border-radius: 5px; box-shadow: var(--sombra-baixa);
+  transition: transform .45s var(--suave), box-shadow .45s var(--suave);
+}
+.presente:hover { transform: translateY(-4px); box-shadow: var(--sombra-alta); }
+.presente__icone { width: 28px; height: 28px; color: var(--ouro); flex: none; margin-bottom: .35rem; }
+.presente h3 { font-size: 1.34rem; margin-bottom: .15rem; }
+.presente__texto {
+  margin: 0 0 .45rem; font-size: .9rem; line-height: 1.6; color: var(--texto-suave);
+}
+.presente > .btn { margin-top: auto; align-self: start; }
+
+.presentes__nota {
+  margin: clamp(1.6rem, 3vw, 2.2rem) auto 0; text-align: center;
+  font-family: var(--display); font-style: italic;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem); color: var(--azul);
 }
 
 

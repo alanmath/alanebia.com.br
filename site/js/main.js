@@ -493,6 +493,30 @@ const CONFIG = {
   }
 
   /* ------------------------------------------------------------------
+     Pix e endereço de presentes
+
+     Os mesmos dados aparecem em dois lugares — a seção "Presentes" e o
+     pop-up de confirmação. Por isso a busca é por data-attribute, e não
+     por id: o mesmo id não pode existir duas vezes na página.
+     ------------------------------------------------------------------ */
+  if (CONFIG.pix?.chave) {
+    $$('[data-pix-chave]').forEach((el) => { el.textContent = CONFIG.pix.chave; });
+    $$('[data-copiar-pix]').forEach((b) => b.setAttribute('data-copiar', CONFIG.pix.chave));
+  }
+  if (CONFIG.pix?.rotulo) {
+    $$('.pix__rotulo').forEach((el) => { el.textContent = CONFIG.pix.rotulo; });
+  }
+
+  if (CONFIG.endereco) {
+    const { linha1, linha2 } = CONFIG.endereco;
+    $$('[data-endereco]').forEach((el) => {
+      el.innerHTML = `${escapa(linha1)}<br />${escapa(linha2)}`;
+    });
+    $$('[data-copiar-endereco]').forEach((b) =>
+      b.setAttribute('data-copiar', `${linha1} - ${linha2}`.replace(/\u00a0/g, ' ')));
+  }
+
+  /* ------------------------------------------------------------------
      Pop-up de confirmação de presença
 
      Os botões "Confirmar presença" espalhados pela página abrem este
@@ -552,23 +576,6 @@ const CONFIG = {
         e.preventDefault(); primeiro.focus();
       }
     });
-
-    // preenche Pix, endereço e link a partir do CONFIG
-    const chave = $('#pix-chave');
-    if (chave && CONFIG.pix?.chave) {
-      chave.textContent = CONFIG.pix.chave;
-      $('#btn-copiar-pix')?.setAttribute('data-copiar', CONFIG.pix.chave);
-    }
-    const rotuloPix = $('.pix__rotulo', modal);
-    if (rotuloPix && CONFIG.pix?.rotulo) rotuloPix.textContent = CONFIG.pix.rotulo;
-
-    const endereco = $('#endereco');
-    if (endereco && CONFIG.endereco) {
-      endereco.innerHTML = `${escapa(CONFIG.endereco.linha1)}<br />${escapa(CONFIG.endereco.linha2)}`;
-      $('#btn-copiar-endereco')?.setAttribute(
-        'data-copiar', `${CONFIG.endereco.linha1} - ${CONFIG.endereco.linha2}`
-          .replace(/ /g, ' '));
-    }
 
     // Local da festa: nome, endereço, horário, mapa e links de navegação
     // saem todos de CONFIG.local, para haver um lugar só a corrigir.

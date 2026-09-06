@@ -47,8 +47,8 @@ passa a abrir o formulário numa aba nova.
 
 Não há formulário dentro do site. Em vez disso:
 
-1. Cinco botões **"Confirmar presença"** espalhados pela página (capa, save the
-   date, card de presentes, faixa de presença e rodapé) abrem o mesmo pop-up.
+1. Quatro botões **"Confirmar presença"** espalhados pela página (capa, save
+   the date, faixa de presença e rodapé) abrem o mesmo pop-up.
 2. O pop-up explica o Pix (lua de mel e reformas da casa nova), mostra a chave
    com botão de copiar, e traz o endereço para quem preferir mandar algo.
 3. O botão dourado **"Ir para a confirmação"** manda para o
@@ -57,8 +57,24 @@ Não há formulário dentro do site. Em vez disso:
 ### Outros textos
 
 - História, capítulos e legendas: `index.html`, seção `NOSSA HISTÓRIA`.
-- Cerimônia, recepção, traje e presentes: `index.html`, seção `O GRANDE DIA`.
+- Cerimônia, recepção, traje e hospedagem: `index.html`, seção `O GRANDE DIA`.
+- Pix e endereço de presentes: `index.html`, seção `PRESENTES`.
 - Perguntas frequentes: `index.html`, seção `DÚVIDAS`.
+
+### A lista de hotéis
+
+Fica em `index.html`, no bloco `<div class="hospedagem" id="onde-ficar">`, dentro
+da seção `O GRANDE DIA`. Cada hotel é um `<li class="hotel">` com nome, uma linha
+de descrição e o link de reserva — os `ibis` e o Novo Centro apontam para o site
+oficial do hotel; o resto vai para o Booking. Para tirar ou acrescentar um, é só
+copiar um `<li>` inteiro: a grade se reorganiza sozinha.
+
+### Pix e endereço aparecem em dois lugares
+
+A seção `PRESENTES` e o pop-up de confirmação mostram os mesmos dados. Por isso
+o `js/main.js` procura por `data-pix-chave`, `data-copiar-pix`, `data-endereco` e
+`data-copiar-endereco` em vez de `id` — assim os dois ficam sempre iguais, e
+continua bastando editar o `CONFIG` para mudar os dois de uma vez.
 
 ---
 
