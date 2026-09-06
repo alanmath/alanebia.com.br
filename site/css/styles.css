@@ -872,54 +872,37 @@ a { color: inherit; }
   .local__mapa { aspect-ratio: 16 / 10; }
 }
 
-.cartoes {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: clamp(1rem, 2vw, 1.6rem);
-}
-/* um cartão sozinho esticado na largura toda fica estranho: centraliza e limita */
-.cartoes--solo {
-  grid-template-columns: minmax(0, 640px);
-  justify-content: center;
-  margin-bottom: clamp(1rem, 2vw, 1.6rem);
-}
-.cartao {
+/* ============================ traje ============================
+   Faixa larga, do tamanho dos painéis abaixo. Como cartão isolado no meio
+   da largura, ela ficava desproporcional em relação ao bloco do local. */
+
+.traje {
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1.1rem, 2.6vw, 2rem); align-items: center;
   background: rgba(246, 239, 231, .05);
   border: 1px solid rgba(246, 239, 231, .11);
-  border-radius: 4px; padding: clamp(1.8rem, 3vw, 2.4rem);
-  /* coluna flex para os selos "em breve" ficarem alinhados na base,
-     mesmo com os cartoes tendo textos de tamanhos diferentes */
-  display: flex; flex-direction: column;
-  transition: background .45s var(--suave), border-color .45s var(--suave), transform .45s var(--suave);
+  border-radius: 4px;
+  padding: clamp(1.5rem, 2.6vw, 2.1rem) clamp(1.5rem, 3vw, 2.6rem);
+  margin-bottom: clamp(1rem, 2vw, 1.6rem);
 }
-.cartao:hover {
-  background: rgba(246, 239, 231, .08);
-  border-color: rgba(198, 167, 94, .38);
-  transform: translateY(-4px);
-}
-.cartao svg {
-  width: 34px; height: 34px; margin-bottom: 1.2rem;
+.traje__icone {
+  width: 40px; height: 40px; flex: none;
   fill: none; stroke: var(--ouro); stroke-width: 1.3;
   stroke-linecap: round; stroke-linejoin: round;
 }
-.cartao h3 { font-size: 1.55rem; margin-bottom: .7rem; color: var(--texto-claro); }
-.cartao p { color: var(--texto-claro-suave); font-size: var(--t-s); margin-bottom: 1.2rem; }
-.cartao dl { margin: 0; display: grid; gap: .7rem; }
-.cartao dt {
-  font-family: var(--rotulo); font-size: .73rem; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--ouro); margin-bottom: .15rem;
+.traje__texto .rotulo { margin-bottom: .5rem; }
+.traje__nome {
+  font-size: clamp(1.5rem, 2.4vw, 1.95rem); color: var(--texto-claro);
+  margin: 0 0 .45rem;
 }
-.cartao dd { margin: 0; font-size: 1.09rem; color: var(--texto-claro); }
-.selo {
-  align-self: start; margin-top: auto; padding-top: 0;
-  font-family: var(--rotulo); font-size: .73rem; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--ouro-claro);
-  border: 1px dashed rgba(198, 167, 94, .45);
-  padding: .35rem .8rem; border-radius: 999px;
-  margin-block-start: 1.4rem;
+.traje__desc {
+  margin: 0; max-width: var(--leitura);
+  font-size: var(--t-s); color: var(--texto-claro-suave);
 }
 
-/* ==================== hospedagem (onde ficar) ====================
-   Vive dentro da seção escura "O grande dia", logo abaixo dos cartões. */
+/* ============== viagem e hospedagem (o bloco do Gabriel) ==============
+   Um painel só: o contato do assessor em cima, a lista de hotéis embaixo,
+   para quem preferir reservar por conta. */
 
 .hospedagem {
   margin-top: clamp(1.6rem, 3.5vw, 2.6rem);
@@ -1017,8 +1000,18 @@ a { color: inherit; }
   color: var(--ouro-claro) !important;
 }
 
-.hospedagem__nota {
-  margin: clamp(1rem, 2vw, 1.3rem) 0 0;
+.hospedagem__divisor {
+  margin: clamp(1.6rem, 3vw, 2.3rem) 0 clamp(.9rem, 2vw, 1.2rem);
+  padding-top: clamp(1.3rem, 2.6vw, 1.9rem);
+  border-top: 1px solid rgba(246, 239, 231, .12);
+  scroll-margin-top: 6rem;
+}
+.hospedagem__divisor h4 {
+  font-family: var(--display); font-size: 1.2rem;
+  color: var(--texto-claro); margin: 0 0 .35rem;
+}
+.hospedagem__divisor p {
+  margin: 0; max-width: var(--leitura);
   font-size: .95rem; line-height: 1.55; color: var(--texto-claro-suave);
 }
 
@@ -1033,18 +1026,16 @@ a { color: inherit; }
 
 /* faixa horizontal: texto a esquerda, botao a direita. Antes era um bloco
    centralizado de 812px para entregar um botao de 55px. */
+/* lado a lado, o texto longo empurrava o botão para um canto solto.
+   Empilhado e centralizado, o convite lê de cima para baixo. */
 .rsvp__faixa {
-  display: grid; grid-template-columns: minmax(0, 1.35fr) auto;
-  gap: clamp(2rem, 5vw, 4rem); align-items: center;
+  display: grid; gap: clamp(1.6rem, 3.5vw, 2.4rem);
+  justify-items: center; text-align: center;
 }
+.rsvp__texto { max-width: 62ch; }
 .rsvp__texto .titulo { margin-bottom: 1.1rem; }
+.rsvp__texto .texto-guia { margin-inline: auto; }
 .rsvp__acao { display: grid; gap: .9rem; justify-items: center; }
-
-@media (max-width: 860px) {
-  .rsvp__faixa { grid-template-columns: 1fr; text-align: center; }
-  .rsvp__texto .rotulo { justify-content: center; }
-  .rsvp__texto .texto-guia { margin-inline: auto; }
-}
 
 
 /* ============================ presentes ============================
@@ -1118,8 +1109,6 @@ a { color: inherit; }
   font-family: var(--display); font-style: italic;
   font-size: clamp(1.36rem, 2.46vw, 1.85rem); color: var(--azul);
 }
-
-.cartao__btn { align-self: start; margin-top: auto; margin-block-start: 1.4rem; }
 
 .rodape__acoes { margin: 0 0 2.4rem; display: flex; justify-content: center; }
 
@@ -1285,9 +1274,11 @@ a { color: inherit; }
      essas bordas comiam quase um terço da tela de 375px, e o texto ficava
      espremido numa coluna estreita demais. */
   .local,
+  .traje,
   .hospedagem { padding: 1.4rem 1.15rem; }
-  .cartao,
   .presente { padding: 1.5rem 1.25rem; }
+  /* o cabide desce para cima do texto quando não há largura para os dois */
+  .traje { grid-template-columns: 1fr; gap: .9rem; }
   .hotel { padding: 1.05rem 1.1rem; }
   .assessor,
   .airbnb { padding: 1.2rem 1.1rem; gap: .8rem; }
@@ -1301,8 +1292,7 @@ a { color: inherit; }
     content: ""; width: 2.2rem; height: 1px;
     background: currentColor; opacity: .55; flex: none;
   }
-  .hospedagem__texto,
-  .hospedagem__nota { text-align: left; }
+  .hospedagem__texto { text-align: left; }
 
   /* botão solto no meio da coluna fica torto: ocupa a linha inteira */
   .assessor .btn,
@@ -1313,7 +1303,6 @@ a { color: inherit; }
   .presente > .btn { width: 100%; }
   .local__acoes { display: grid; gap: .7rem; }
   .presente > .btn { align-self: stretch; }
-  .cartoes--solo .cartao__btn { width: 100%; }
 
   /* ícone e texto lado a lado economizam altura quando o bloco empilha */
   .assessor,

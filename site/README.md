@@ -46,25 +46,24 @@ três a partir do `CONFIG` assim que roda, então basta trocar em um lugar.
 ### Outros textos
 
 - História, capítulos e legendas: `index.html`, seção `NOSSA HISTÓRIA`.
-- Traje, cerimônia, passagens e hospedagem: `index.html`, seção `O GRANDE DIA`,
-  nessa ordem.
+- Traje, cerimônia e o painel de viagem e hospedagem: `index.html`, seção
+  `O GRANDE DIA`, nessa ordem.
 - Pix e endereço de presentes: `index.html`, seção `PRESENTES`.
 - Perguntas frequentes: `index.html`, seção `DÚVIDAS`.
 
 ### Passagens e hospedagem
 
-São dois blocos irmãos dentro de `O GRANDE DIA`, com a mesma classe
-`.hospedagem`:
+É um painel só, `<div class="hospedagem" id="como-chegar">`, em duas metades:
 
-- `#como-chegar` traz o aeroporto e o contato do Gabriel, assessor de viagem da
-  Passabot. O telefone aparece escrito no HTML e também dentro do link
-  `https://wa.me/55...`, com uma mensagem já preenchida — se o número mudar,
-  troque nos dois lugares.
-- `#onde-ficar` é a lista de hotéis, para quem preferir resolver a hospedagem por
-  conta. Cada hotel é um `<li class="hotel">` com nome, uma linha de descrição e o
-  link de reserva; os `ibis` e o Novo Centro apontam para o site oficial e o resto
-  vai para o Booking. Para tirar ou acrescentar um, é só copiar um `<li>` inteiro:
-  a grade se reorganiza sozinha.
+- Em cima, o contato do Gabriel, assessor de viagem da Passabot. O telefone
+  aparece escrito no HTML e também dentro do link `https://wa.me/55...`, com uma
+  mensagem já preenchida — se o número mudar, troque nos dois lugares.
+- Embaixo, depois do `.hospedagem__divisor` (que leva a âncora `#onde-ficar`), a
+  lista de hotéis para quem preferir resolver a hospedagem por conta. Cada hotel é
+  um `<li class="hotel">` com nome, uma linha de descrição e o link de reserva; os
+  `ibis` e o Novo Centro apontam para o site oficial e o resto vai para o Booking.
+  Para tirar ou acrescentar um, é só copiar um `<li>` inteiro: a grade se
+  reorganiza sozinha.
 
 ### Pix e endereço
 
