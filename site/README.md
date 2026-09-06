@@ -46,17 +46,25 @@ três a partir do `CONFIG` assim que roda, então basta trocar em um lugar.
 ### Outros textos
 
 - História, capítulos e legendas: `index.html`, seção `NOSSA HISTÓRIA`.
-- Cerimônia, recepção, traje e hospedagem: `index.html`, seção `O GRANDE DIA`.
+- Traje, cerimônia, passagens e hospedagem: `index.html`, seção `O GRANDE DIA`,
+  nessa ordem.
 - Pix e endereço de presentes: `index.html`, seção `PRESENTES`.
 - Perguntas frequentes: `index.html`, seção `DÚVIDAS`.
 
-### A lista de hotéis
+### Passagens e hospedagem
 
-Fica em `index.html`, no bloco `<div class="hospedagem" id="onde-ficar">`, dentro
-da seção `O GRANDE DIA`. Cada hotel é um `<li class="hotel">` com nome, uma linha
-de descrição e o link de reserva — os `ibis` e o Novo Centro apontam para o site
-oficial do hotel; o resto vai para o Booking. Para tirar ou acrescentar um, é só
-copiar um `<li>` inteiro: a grade se reorganiza sozinha.
+São dois blocos irmãos dentro de `O GRANDE DIA`, com a mesma classe
+`.hospedagem`:
+
+- `#como-chegar` traz o aeroporto e o contato do Gabriel, assessor de viagem da
+  Passabot. O telefone aparece escrito no HTML e também dentro do link
+  `https://wa.me/55...`, com uma mensagem já preenchida — se o número mudar,
+  troque nos dois lugares.
+- `#onde-ficar` é a lista de hotéis, para quem preferir resolver a hospedagem por
+  conta. Cada hotel é um `<li class="hotel">` com nome, uma linha de descrição e o
+  link de reserva; os `ibis` e o Novo Centro apontam para o site oficial e o resto
+  vai para o Booking. Para tirar ou acrescentar um, é só copiar um `<li>` inteiro:
+  a grade se reorganiza sozinha.
 
 ### Pix e endereço
 
@@ -159,7 +167,7 @@ número, o navegador dos convidados continuaria mostrando a versão antiga.
 - Capa com a foto do civil ampliada para panorâmica, poeira dourada animada e contagem regressiva.
 - Botão que gera um arquivo `.ics` na hora, para salvar na agenda do celular.
 - Mapa ilustrado do Brasil ao lado da lista de paradas, com os pontos acendendo em sequência.
-- Linha do tempo com seis capítulos, trilho dourado que se desenha conforme a rolagem e contadores de distância (830 km → 150 km → 0 km).
+- Linha do tempo com seis capítulos, trilho dourado que se desenha conforme a rolagem e contadores de distância fechando cada capítulo (830 km → 150 km → 0 km).
 - Faixa da Collie, a filha de quatro patas.
 - Galeria com filtro por capítulo, mosaico e lightbox (setas do teclado e arrastar no celular funcionam).
 - Seção de presentes com chave Pix, titular e endereço, cada um com botão de copiar.

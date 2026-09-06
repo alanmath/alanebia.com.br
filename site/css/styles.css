@@ -876,6 +876,12 @@ a { color: inherit; }
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: clamp(1rem, 2vw, 1.6rem);
 }
+/* um cartão sozinho esticado na largura toda fica estranho: centraliza e limita */
+.cartoes--solo {
+  grid-template-columns: minmax(0, 640px);
+  justify-content: center;
+  margin-bottom: clamp(1rem, 2vw, 1.6rem);
+}
 .cartao {
   background: rgba(246, 239, 231, .05);
   border: 1px solid rgba(246, 239, 231, .11);
@@ -992,8 +998,32 @@ a { color: inherit; }
 }
 .airbnb p { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--texto-claro-suave); }
 
+.assessor {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1rem 1.25rem; align-items: center;
+  padding: 1.3rem 1.4rem;
+  background: rgba(198, 167, 94, .08);
+  border: 1px solid rgba(198, 167, 94, .4); border-radius: 4px;
+}
+.assessor > svg { width: 26px; height: 26px; color: var(--ouro); flex: none; }
+.assessor h4 {
+  font-family: var(--display); font-size: 1.14rem;
+  color: var(--texto-claro); margin: 0 0 .3rem;
+}
+.assessor p { margin: 0; font-size: .95rem; line-height: 1.5; color: var(--texto-claro-suave); }
+.assessor__fone {
+  margin-top: .4rem !important;
+  font-family: var(--rotulo); font-size: 1.02rem; letter-spacing: .08em;
+  color: var(--ouro-claro) !important;
+}
+
+.hospedagem__nota {
+  margin: clamp(1rem, 2vw, 1.3rem) 0 0;
+  font-size: .95rem; line-height: 1.55; color: var(--texto-claro-suave);
+}
+
 @media (max-width: 700px) {
-  .airbnb { grid-template-columns: 1fr; justify-items: start; }
+  .airbnb, .assessor { grid-template-columns: 1fr; justify-items: start; }
 }
 
 
@@ -1245,6 +1275,58 @@ a { color: inherit; }
   .chamada--historia { padding-inline: 0; }
   .hero__conteudo { padding-block: 7rem 6rem; }
   .capitulo__num { font-size: 2.18rem; top: .7rem; right: 1rem; }
+  /* o número fica por cima do rótulo quando a data ocupa duas linhas.
+     Com o rótulo quebrando, o tracinho tem de subir para a primeira. */
+  .capitulo__cartao .rotulo { padding-right: 3.4rem; align-items: flex-start; }
+  .capitulo__cartao .rotulo::before { margin-top: .55em; }
+
+  /* --- respiro no celular ---
+     Cada painel tinha a moldura pensada para desktop. Somadas ao gutter,
+     essas bordas comiam quase um terço da tela de 375px, e o texto ficava
+     espremido numa coluna estreita demais. */
+  .local,
+  .hospedagem { padding: 1.4rem 1.15rem; }
+  .cartao,
+  .presente { padding: 1.5rem 1.25rem; }
+  .hotel { padding: 1.05rem 1.1rem; }
+  .assessor,
+  .airbnb { padding: 1.2rem 1.1rem; gap: .8rem; }
+
+  /* rótulo e título dos painéis centralizados, como os das seções.
+     O parágrafo continua alinhado à esquerda: centralizado, um texto de
+     cinco linhas numa tela estreita fica difícil de acompanhar. */
+  .hospedagem__cabecalho { text-align: center; }
+  .hospedagem__cabecalho .rotulo { justify-content: center; }
+  .hospedagem__cabecalho .rotulo::after {
+    content: ""; width: 2.2rem; height: 1px;
+    background: currentColor; opacity: .55; flex: none;
+  }
+  .hospedagem__texto,
+  .hospedagem__nota { text-align: left; }
+
+  /* botão solto no meio da coluna fica torto: ocupa a linha inteira */
+  .assessor .btn,
+  .airbnb .btn,
+  .local__acoes .btn,
+  .rsvp__acao .btn,
+  .pix .btn,
+  .presente > .btn { width: 100%; }
+  .local__acoes { display: grid; gap: .7rem; }
+  .presente > .btn { align-self: stretch; }
+  .cartoes--solo .cartao__btn { width: 100%; }
+
+  /* ícone e texto lado a lado economizam altura quando o bloco empilha */
+  .assessor,
+  .airbnb { grid-template-columns: 1fr; }
+
+  /* a chave do Pix é longa: sem isso ela quebra no meio dos dígitos */
+  .pix__chave { font-size: 1rem; letter-spacing: .04em; }
+
+  .contagem { gap: clamp(.6rem, 4vw, 1.4rem); }
+  .contagem__cel { min-width: 3.6rem; }
+  .fita__acoes,
+  .hero__acoes { justify-content: center; }
+  .hero__acoes .btn { width: 100%; }
   .lightbox__seta--ant, .lightbox__seta--prox { top: auto; bottom: 1rem; transform: none; }
   .lightbox__seta--ant:hover, .lightbox__seta--prox:hover { transform: scale(1.08); }
   .lightbox img { max-height: 64svh; }
