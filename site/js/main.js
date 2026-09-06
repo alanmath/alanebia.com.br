@@ -65,6 +65,13 @@ const CONFIG = {
   const $  = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
+  function escapa(txt) {
+    return String(txt ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+
   /* ------------------------------------------------------------------
      Rolagem suave (Lenis) — opcional. Se a biblioteca não carregar,
      o site continua funcionando com a rolagem normal do navegador.
@@ -158,7 +165,6 @@ const CONFIG = {
   if (estatico || semMovimento || !('IntersectionObserver' in window)) {
     $$('[data-revela]').forEach((el) => el.classList.add('dentro'));
     $$('[data-capitulo]').forEach((el) => el.classList.add('visivel'));
-    $$('.mosaico__item').forEach((el) => el.classList.add('dentro'));
   } else {
     const olho = new IntersectionObserver((entradas) => {
       entradas.forEach((e) => {
@@ -335,165 +341,6 @@ const CONFIG = {
       });
     }, { threshold: 0.02 });
     heroObs.observe(tela);
-  }
-
-  /* ------------------------------------------------------------------
-     Galeria: monta o mosaico a partir de assets/data/galeria.json
-     ------------------------------------------------------------------ */
-  const mosaico = $('#mosaico');
-  let fotos = [];
-
-  async function montaGaleria() {
-    if (!mosaico) return;
-    // assets/data/galeria.js define window.GALERIA — assim a galeria funciona
-    // inclusive abrindo o index.html direto do disco. O fetch fica de reserva.
-    if (window.GALERIA && Array.isArray(window.GALERIA.fotos)) {
-      fotos = window.GALERIA.fotos;
-    } else {
-      try {
-        const resp = await fetch('assets/data/galeria.json');
-        if (!resp.ok) throw new Error(resp.status);
-        fotos = (await resp.json()).fotos || [];
-      } catch (err) {
-        console.warn('Galeria não carregou:', err);
-        mosaico.innerHTML =
-          '<p class="galeria__vazio">Não consegui carregar as fotos. Rode ' +
-          '<code>tools/2_preparar_imagens.py</code> para gerá-las.</p>';
-        return;
-      }
-    }
-
-    if (!fotos.length) {
-      mosaico.innerHTML = '<p class="galeria__vazio">Nenhuma foto ainda.</p>';
-      return;
-    }
-
-    mosaico.innerHTML = '';
-    fotos.forEach((f, i) => {
-      const fig = document.createElement('figure');
-      fig.className = 'mosaico__item';
-      fig.dataset.capitulo = f.capitulo;
-      fig.dataset.indice = String(i);
-      fig.innerHTML = `
-        <button class="mosaico__botao" type="button" data-abre="${i}">
-          <picture>
-            <source type="image/webp"
-              srcset="assets/img/galeria/${f.id}-700.webp 700w, assets/img/galeria/${f.id}-1400.webp 1400w"
-              sizes="(max-width: 620px) 50vw, (max-width: 980px) 33vw, 25vw" />
-            <img src="assets/img/galeria/${f.id}-700.jpg" alt="${escapa(f.alt)}"
-                 width="700" height="875" loading="lazy" decoding="async" />
-          </picture>
-          <span class="mosaico__tag">${escapa(f.rotulo)}</span>
-          <span class="mosaico__legenda">${escapa(f.legenda)}</span>
-        </button>`;
-      mosaico.appendChild(fig);
-    });
-
-    // entrada escalonada
-    if (estatico || semMovimento || !('IntersectionObserver' in window)) {
-      $$('.mosaico__item').forEach((el) => el.classList.add('dentro'));
-    } else {
-      const obs = new IntersectionObserver((entradas) => {
-        entradas.forEach((e, k) => {
-          if (!e.isIntersecting) return;
-          setTimeout(() => e.target.classList.add('dentro'), k * 55);
-          obs.unobserve(e.target);
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
-      $$('.mosaico__item').forEach((el) => obs.observe(el));
-    }
-
-    mosaico.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-abre]');
-      if (btn) abreLightbox(Number(btn.dataset.abre));
-    });
-  }
-
-  function escapa(txt) {
-    return String(txt ?? '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  /* ------------------------------------------------------------------
-     Lightbox
-     ------------------------------------------------------------------ */
-  const lightbox = $('#lightbox');
-  const lbImg = lightbox ? $('img', lightbox) : null;
-  const lbLegenda = $('#lightbox-legenda');
-  const lbContador = $('#lightbox-contador');
-  let indiceAtual = 0;
-  let ultimoFoco = null;
-
-  function listaVisivel() {
-    return $$('.mosaico__item').filter((el) => !el.hidden)
-      .map((el) => Number(el.dataset.indice));
-  }
-
-  function abreLightbox(indice) {
-    if (!lightbox || !fotos.length) return;
-    ultimoFoco = document.activeElement;
-    indiceAtual = indice;
-    pinta();
-    lightbox.dataset.aberto = 'true';
-    document.body.style.overflow = 'hidden';
-    if (lenis) lenis.stop();
-    $('.lightbox__fechar', lightbox)?.focus();
-  }
-
-  function fechaLightbox() {
-    if (!lightbox) return;
-    lightbox.dataset.aberto = 'false';
-    document.body.style.overflow = '';
-    if (lenis) lenis.start();
-    ultimoFoco?.focus();
-  }
-
-  function pinta() {
-    const f = fotos[indiceAtual];
-    if (!f || !lbImg) return;
-    lbImg.src = `assets/img/galeria/${f.id}-cheia.jpg`;
-    lbImg.alt = f.alt || '';
-    if (lbLegenda) lbLegenda.textContent = f.legenda || '';
-    const lista = listaVisivel();
-    const pos = lista.indexOf(indiceAtual);
-    if (lbContador) {
-      lbContador.textContent = `${f.rotulo} · ${pos + 1} de ${lista.length}`;
-    }
-  }
-
-  function navega(passo) {
-    const lista = listaVisivel();
-    if (!lista.length) return;
-    const pos = lista.indexOf(indiceAtual);
-    indiceAtual = lista[(pos + passo + lista.length) % lista.length];
-    pinta();
-  }
-
-  if (lightbox) {
-    $('.lightbox__fechar', lightbox).addEventListener('click', fechaLightbox);
-    $('.lightbox__seta--ant', lightbox).addEventListener('click', () => navega(-1));
-    $('.lightbox__seta--prox', lightbox).addEventListener('click', () => navega(1));
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) fechaLightbox();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (lightbox.dataset.aberto !== 'true') return;
-      if (e.key === 'Escape') fechaLightbox();
-      if (e.key === 'ArrowLeft') navega(-1);
-      if (e.key === 'ArrowRight') navega(1);
-    });
-
-    // arrastar no celular
-    let x0 = null;
-    lightbox.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
-    lightbox.addEventListener('touchend', (e) => {
-      if (x0 === null) return;
-      const dx = e.changedTouches[0].clientX - x0;
-      if (Math.abs(dx) > 55) navega(dx < 0 ? 1 : -1);
-      x0 = null;
-    }, { passive: true });
   }
 
   /* ------------------------------------------------------------------

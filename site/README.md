@@ -82,22 +82,26 @@ A escala inteira sai dos tokens `--t-hero` a `--t-rotulo`, no `:root` do
 
 ## Adicionando fotos novas
 
-O trabalho pesado é automático. Jogue as fotos na pasta `fotos/` (na raiz do
-projeto, um nível acima desta) e rode os passos descritos em
-[`../tools/README.md`](../tools/README.md).
+O site não tem mais galeria. As fotos que aparecem hoje são quatro, escolhidas
+a dedo e escritas direto no `index.html`: três na linha do tempo da história e
+uma na faixa da Collie.
 
-Em resumo:
+A esteira das ferramentas continua útil para preparar a imagem — ela recorta,
+otimiza e gera os tamanhos que o site usa. Jogue as fotos na pasta `fotos/` (na
+raiz do projeto, um nível acima desta) e rode os passos de
+[`../tools/README.md`](../tools/README.md):
 
 ```bash
 # a chave da API do Gemini, uma vez por sessão do terminal
 export GEMINI_API_KEY="sua-chave"          # Windows: $env:GEMINI_API_KEY = "sua-chave"
 
 python tools/1_analisar_fotos.py           # o Gemini lê cada foto nova
-python tools/2_preparar_imagens.py         # recorta, otimiza e monta a galeria
+python tools/2_preparar_imagens.py         # recorta e otimiza
 ```
 
-O site se atualiza sozinho: os filtros por capítulo, as legendas, os textos
-alternativos e o lightbox saem todos da leitura que o Gemini fez.
+Depois, aponte a foto nova no `index.html` na mão, trocando o `src` e o `alt`
+do `<figure class="moldura">` que você quiser. O `assets/data/galeria.json`
+continua sendo gerado pela esteira, mas a página não lê mais esse arquivo.
 
 ---
 
@@ -113,7 +117,7 @@ code. Nas duas o documento agora está desfocado.
 
 **Mesmo assim, confira com o olho antes de publicar.** A detecção é boa, mas
 não é infalível — na primeira tentativa ela errou o alvo e borrou as flores.
-Abra a galeria, olhe as fotos que envolvem documentos e confirme. Se algo
+Abra a foto antes de colocá-la no site e confirme com o olho. Se algo
 escapar, dá para marcar a área na mão: veja
 [`../tools/README.md`](../tools/README.md).
 
@@ -151,10 +155,10 @@ Qualquer hospedagem de site estático serve. As mais fáceis:
 
 Pode arrastar a pasta `site` inteira, sem medo: os arquivos pesados (os `.png`
 originais das artes, de 7 MB) ficam guardados fora dela, em `tools/masters/`.
-A pasta publicada tem cerca de 22 MB, quase tudo foto de galeria.
+A pasta publicada tem cerca de 22 MB, quase tudo imagem.
 
-Quando você republicar, os endereços do CSS, do JavaScript e do arquivo da
-galeria mudam sozinhos (`styles.css?v=...`). Isso é de propósito: sem esse
+Quando você republicar, os endereços do CSS e do JavaScript mudam sozinhos
+(`styles.css?v=...`). Isso é de propósito: sem esse
 número, o navegador dos convidados continuaria mostrando a versão antiga.
 
 ---
@@ -163,12 +167,11 @@ número, o navegador dos convidados continuaria mostrando a versão antiga.
 
 **Estrutura**
 
-- Capa com a foto do civil ampliada para panorâmica, poeira dourada animada e contagem regressiva.
+- Capa com a foto do civil ampliada para panorâmica, poeira dourada animada, contagem regressiva e os dois botões em destaque: confirmar presença e presentes.
 - Botão que gera um arquivo `.ics` na hora, para salvar na agenda do celular.
 - Mapa ilustrado do Brasil ao lado da lista de paradas, com os pontos acendendo em sequência.
 - Linha do tempo com seis capítulos, trilho dourado que se desenha conforme a rolagem e contadores de distância fechando cada capítulo (830 km → 150 km → 0 km).
 - Faixa da Collie, a filha de quatro patas.
-- Galeria com filtro por capítulo, mosaico e lightbox (setas do teclado e arrastar no celular funcionam).
 - Seção de presentes com chave Pix, titular e endereço, cada um com botão de copiar.
 - Lista de hotéis de Petrolina com link de reserva, mais a dica de Airbnb.
 - Perguntas frequentes em sanfona.
