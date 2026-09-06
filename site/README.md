@@ -14,11 +14,11 @@ bloco chamado `CONFIG`:
 
 | O que | Onde |
 |---|---|
-| **Link do formulário de confirmação** | `CONFIG.linkConfirmacao` |
+| **Link da confirmação de presença** | `CONFIG.linkConfirmacao` |
 | Data e hora do casamento | `CONFIG.dataCasamento` (o mês começa em 0, então `10` = novembro) |
 | Local da festa, endereço e horário | `CONFIG.local` |
 | Posição do pino no mapa | `CONFIG.local.lat` e `CONFIG.local.lng` |
-| Chave Pix | `CONFIG.pix.chave` |
+| Chave Pix, titular e banco | `CONFIG.pix` |
 | Endereço para presentes | `CONFIG.endereco` |
 | Texto do evento no arquivo de agenda | `CONFIG.evento` |
 
@@ -30,29 +30,18 @@ Google. As coordenadas em `CONFIG.local` alimentam o mapa embutido e os botões
 do lugar, abra o local no Google Maps, copie as coordenadas certas e troque
 `lat` e `lng`. É o único ponto a corrigir.
 
-### O link do formulário — falta preencher
-
-Hoje está com um endereço de exemplo:
-
-```js
-linkConfirmacao: 'https://forms.gle/COLOQUE-O-LINK-AQUI',
-```
-
-Enquanto esse texto estiver aí, o botão **não** leva a lugar nenhum: ele mostra
-um aviso dentro do próprio pop-up dizendo que o link ainda não foi configurado.
-Troque pelo endereço real (Google Forms, Typeform, o que vocês usarem) e o botão
-passa a abrir o formulário numa aba nova.
-
 ### Como funciona a confirmação de presença
 
-Não há formulário dentro do site. Em vez disso:
+Não há formulário dentro do site. Os três botões **"Confirmar presença"** (capa,
+faixa de presença e rodapé) são links diretos para a lista dos noivos:
 
-1. Quatro botões **"Confirmar presença"** espalhados pela página (capa, save
-   the date, faixa de presença e rodapé) abrem o mesmo pop-up.
-2. O pop-up explica o Pix (lua de mel e reformas da casa nova), mostra a chave
-   com botão de copiar, e traz o endereço para quem preferir mandar algo.
-3. O botão dourado **"Ir para a confirmação"** manda para o
-   `CONFIG.linkConfirmacao`.
+```js
+linkConfirmacao: 'https://noivos.casar.com/bialan',
+```
+
+O endereço também está escrito no `href` de cada botão no `index.html`, para o
+link funcionar mesmo se o JavaScript não carregar. O `js/main.js` sobrescreve os
+três a partir do `CONFIG` assim que roda, então basta trocar em um lugar.
 
 ### Outros textos
 
@@ -69,12 +58,18 @@ de descrição e o link de reserva — os `ibis` e o Novo Centro apontam para o 
 oficial do hotel; o resto vai para o Booking. Para tirar ou acrescentar um, é só
 copiar um `<li>` inteiro: a grade se reorganiza sozinha.
 
-### Pix e endereço aparecem em dois lugares
+### Pix e endereço
 
-A seção `PRESENTES` e o pop-up de confirmação mostram os mesmos dados. Por isso
-o `js/main.js` procura por `data-pix-chave`, `data-copiar-pix`, `data-endereco` e
-`data-copiar-endereco` em vez de `id` — assim os dois ficam sempre iguais, e
-continua bastando editar o `CONFIG` para mudar os dois de uma vez.
+Saem do `CONFIG` e são escritos na seção `PRESENTES` pelos data-attributes
+`data-pix-chave`, `data-pix-titular`, `data-copiar-pix`, `data-endereco` e
+`data-copiar-endereco`. O endereço aceita três linhas (`linha1`, `linha2` e
+`linha3`, hoje usada para o CEP), e o botão de copiar monta o texto sozinho a
+partir delas.
+
+### Tamanho das letras
+
+A escala inteira sai dos tokens `--t-hero` a `--t-rotulo`, no `:root` do
+`css/styles.css`. Mexer neles muda o site todo de uma vez.
 
 ---
 
@@ -164,10 +159,11 @@ número, o navegador dos convidados continuaria mostrando a versão antiga.
 - Capa com a foto do civil ampliada para panorâmica, poeira dourada animada e contagem regressiva.
 - Botão que gera um arquivo `.ics` na hora, para salvar na agenda do celular.
 - Mapa ilustrado do Brasil ao lado da lista de paradas, com os pontos acendendo em sequência.
-- Linha do tempo com sete capítulos, trilho dourado que se desenha conforme a rolagem e contadores de distância (800 km → 150 km → 0 km).
-- Faixa da Collie, a madrinha.
+- Linha do tempo com seis capítulos, trilho dourado que se desenha conforme a rolagem e contadores de distância (830 km → 150 km → 0 km).
+- Faixa da Collie, a filha de quatro patas.
 - Galeria com filtro por capítulo, mosaico e lightbox (setas do teclado e arrastar no celular funcionam).
-- Pop-up de confirmação de presença com Pix, endereço e botão para o formulário — acessível pelo teclado, fecha no Esc e devolve o foco a quem o abriu.
+- Seção de presentes com chave Pix, titular e endereço, cada um com botão de copiar.
+- Lista de hotéis de Petrolina com link de reserva, mais a dica de Airbnb.
 - Perguntas frequentes em sanfona.
 
 **Detalhes técnicos**
@@ -205,7 +201,7 @@ maior — 21 telas — e encolheu tirando o que se repetia:
 - fotos duplicadas (o passo 1 agora descarta sozinho as fotos iguais);
 - a seção que só tinha uma frase de efeito sobre o açaí, ideia que já aparecia
   na capa, no capítulo 01 e no rodapé;
-- a seção de pedido de música, que só apontava para o mesmo pop-up da seção
+- a seção de pedido de música, que só apontava para o mesmo lugar da seção
   logo acima;
 - a linha do tempo, que tinha o trilho no meio e deixava metade da largura
   vazia em cada capítulo;

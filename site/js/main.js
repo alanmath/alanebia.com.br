@@ -22,21 +22,25 @@ const CONFIG = {
     lng: -40.5437354
   },
 
-  // >>> LINK DO FORMULÁRIO DE CONFIRMAÇÃO DE PRESENÇA <<<
-  // Troque pelo endereço real (Google Forms, Typeform, o que vocês usarem).
-  // É para cá que o botão do pop-up manda o convidado.
-  linkConfirmacao: 'https://forms.gle/COLOQUE-O-LINK-AQUI',
+  // >>> LINK DA CONFIRMAÇÃO DE PRESENÇA <<<
+  // Para onde vão todos os botões "Confirmar presença" da página.
+  linkConfirmacao: 'https://noivos.casar.com/bialan',
 
-  // Dados do pop-up de presença
+  // Dados da seção Presentes
   pix: {
     chave: '87991893823',
     // Como a chave aparece na tela. Use o mesmo texto que você diria a alguém.
-    rotulo: 'Chave Pix'
+    rotulo: 'Chave Pix',
+    // Quem recebe. Aparece embaixo da chave, para o convidado conferir
+    // o nome antes de mandar.
+    titular: 'Bianca Freitas da Silva',
+    banco: 'Nubank'
   },
 
   endereco: {
-    linha1: 'Rua José Batista Pereira, 51 — ap. 1910',
-    linha2: 'Campo Belo · São Paulo · SP'
+    linha1: 'Rua José Batista Pereira, 51, ap. 1910',
+    linha2: 'Campo Belo · São Paulo · SP',
+    linha3: 'CEP 04619-010'
   },
 
   // Dados usados no arquivo de calendário (.ics)
@@ -495,9 +499,9 @@ const CONFIG = {
   /* ------------------------------------------------------------------
      Pix e endereço de presentes
 
-     Os mesmos dados aparecem em dois lugares — a seção "Presentes" e o
-     pop-up de confirmação. Por isso a busca é por data-attribute, e não
-     por id: o mesmo id não pode existir duas vezes na página.
+     Tudo sai do CONFIG e é escrito na seção "Presentes". A busca é por
+     data-attribute em vez de id porque o mesmo dado pode aparecer em mais
+     de um lugar da página conforme o site cresce.
      ------------------------------------------------------------------ */
   if (CONFIG.pix?.chave) {
     $$('[data-pix-chave]').forEach((el) => { el.textContent = CONFIG.pix.chave; });
@@ -506,119 +510,58 @@ const CONFIG = {
   if (CONFIG.pix?.rotulo) {
     $$('.pix__rotulo').forEach((el) => { el.textContent = CONFIG.pix.rotulo; });
   }
+  if (CONFIG.pix?.titular) {
+    const dono = [CONFIG.pix.titular, CONFIG.pix.banco].filter(Boolean).join(' · ');
+    $$('[data-pix-titular]').forEach((el) => { el.textContent = dono; });
+  }
 
   if (CONFIG.endereco) {
-    const { linha1, linha2 } = CONFIG.endereco;
+    const linhas = [CONFIG.endereco.linha1, CONFIG.endereco.linha2, CONFIG.endereco.linha3]
+      .filter(Boolean);
     $$('[data-endereco]').forEach((el) => {
-      el.innerHTML = `${escapa(linha1)}<br />${escapa(linha2)}`;
+      el.innerHTML = linhas.map(escapa).join('<br />');
     });
     $$('[data-copiar-endereco]').forEach((b) =>
-      b.setAttribute('data-copiar', `${linha1} - ${linha2}`.replace(/\u00a0/g, ' ')));
+      b.setAttribute('data-copiar', linhas.join(', ').replace(/\u00a0/g, ' ')));
   }
 
   /* ------------------------------------------------------------------
-     Pop-up de confirmação de presença
+     Confirmação de presença
 
-     Os botões "Confirmar presença" espalhados pela página abrem este
-     pop-up, que mostra o Pix e o endereço antes de mandar o convidado
-     para o formulário de verdade.
+     Os botões "Confirmar presença" são links diretos para o site da lista
+     (CONFIG.linkConfirmacao). O href já está no HTML; aqui a gente só
+     sobrescreve, para o CONFIG continuar sendo o único lugar a editar.
      ------------------------------------------------------------------ */
-  const modal = $('#modal-presenca');
-  let focoAntesDoModal = null;
-
-  function focaveis() {
-    return $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', modal)
-      .filter((el) => el.offsetParent !== null);
+  if (CONFIG.linkConfirmacao) {
+    $$('[data-rsvp]').forEach((a) => { a.href = CONFIG.linkConfirmacao; });
   }
 
-  function abreModal(origem) {
-    if (!modal) return;
-    // guarda quem abriu para devolver o foco no fim. Nao da para confiar no
-    // document.activeElement: o Safari nao foca botao ao clicar.
-    focoAntesDoModal = origem || document.activeElement;
-    modal.dataset.aberto = 'true';
-    document.body.style.overflow = 'hidden';
-    if (lenis) lenis.stop();
-    $('.modal__fechar', modal)?.focus();
-  }
+  /* ------------------------------------------------------------------
+     Local da festa
 
-  function fechaModal() {
-    if (!modal || modal.dataset.aberto !== 'true') return;
-    modal.dataset.aberto = 'false';
-    document.body.style.overflow = '';
-    if (lenis) lenis.start();
-    if (focoAntesDoModal && document.contains(focoAntesDoModal)) {
-      focoAntesDoModal.focus();
-    }
-  }
+     Nome, endereço, horário, mapa e links de navegação saem todos de
+     CONFIG.local, para haver um lugar só a corrigir.
+     ------------------------------------------------------------------ */
+  const L = CONFIG.local;
+  if (L) {
+    const coord = `${L.lat},${L.lng}`;
+    const põe = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
 
-  $$('[data-abre-presenca]').forEach((btn) =>
-    btn.addEventListener('click', () => abreModal(btn)));
+    põe('#local-nome', L.nome);
+    põe('#local-horario', `A partir das ${L.horario}`);
 
-  if (modal) {
-    $('.modal__fechar', modal).addEventListener('click', fechaModal);
+    const end = $('#local-endereco');
+    if (end) end.innerHTML = `${escapa(L.linha1)}<br />${escapa(L.linha2)}`;
 
-    // clicar no fundo escuro fecha
-    modal.addEventListener('click', (e) => { if (e.target === modal) fechaModal(); });
+    $('#local-rota')?.setAttribute(
+      'href', `https://www.google.com/maps/dir/?api=1&destination=${coord}`);
+    $('#local-waze')?.setAttribute(
+      'href', `https://waze.com/ul?ll=${coord}&navigate=yes`);
 
-    document.addEventListener('keydown', (e) => {
-      if (modal.dataset.aberto !== 'true') return;
-      if (e.key === 'Escape') { fechaModal(); return; }
-      // prende o foco dentro do pop-up enquanto ele estiver aberto
-      if (e.key !== 'Tab') return;
-      const lista = focaveis();
-      if (!lista.length) return;
-      const primeiro = lista[0];
-      const ultimo = lista[lista.length - 1];
-      if (e.shiftKey && document.activeElement === primeiro) {
-        e.preventDefault(); ultimo.focus();
-      } else if (!e.shiftKey && document.activeElement === ultimo) {
-        e.preventDefault(); primeiro.focus();
-      }
-    });
-
-    // Local da festa: nome, endereço, horário, mapa e links de navegação
-    // saem todos de CONFIG.local, para haver um lugar só a corrigir.
-    const L = CONFIG.local;
-    if (L) {
-      const coord = `${L.lat},${L.lng}`;
-      const põe = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
-
-      põe('#local-nome', L.nome);
-      põe('#local-horario', `A partir das ${L.horario}`);
-
-      const end = $('#local-endereco');
-      if (end) end.innerHTML = `${escapa(L.linha1)}<br />${escapa(L.linha2)}`;
-
-      $('#local-rota')?.setAttribute(
-        'href', `https://www.google.com/maps/dir/?api=1&destination=${coord}`);
-      $('#local-waze')?.setAttribute(
-        'href', `https://waze.com/ul?ll=${coord}&navigate=yes`);
-
-      const mapa = $('#local-mapa');
-      if (mapa) {
-        mapa.src = `https://www.google.com/maps?q=${coord}&z=14&output=embed`;
-        mapa.title = `Mapa mostrando a localização do ${L.nome}, em Petrolina`;
-      }
-    }
-
-    const irFormulario = $('#btn-ir-formulario');
-    if (irFormulario) {
-      if (CONFIG.linkConfirmacao && !CONFIG.linkConfirmacao.includes('COLOQUE-O-LINK')) {
-        irFormulario.href = CONFIG.linkConfirmacao;
-      } else {
-        // link ainda não configurado: avisa em vez de levar a lugar nenhum
-        irFormulario.removeAttribute('target');
-        irFormulario.addEventListener('click', (e) => {
-          e.preventDefault();
-          const nota = $('.modal__nota');
-          if (nota) {
-            nota.textContent = 'O link do formulário ainda não foi configurado ' +
-              '(CONFIG.linkConfirmacao, em js/main.js).';
-            nota.style.color = 'var(--oliva)';
-          }
-        });
-      }
+    const mapa = $('#local-mapa');
+    if (mapa) {
+      mapa.src = `https://www.google.com/maps?q=${coord}&z=14&output=embed`;
+      mapa.title = `Mapa mostrando a localização do ${L.nome}, em Petrolina`;
     }
   }
 
